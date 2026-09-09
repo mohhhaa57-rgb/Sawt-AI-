@@ -1,37 +1,96 @@
-const express = require('express');
-const OpenAI = require('openai'); // مكتبة OpenAI الرسمية
-const app = express();
+document.addEventListener("DOMContentLoaded", () => {
+    const textInput = document.getElementById("textInput");
+    const charCount = document.getElementById("charCount");
+    const languageSelect = document.getElementById("languageSelect");
+    const voiceSelect = document.getElementById("voiceSelect");
+    const rateRange = document.getElementById("rateRange");
+    const rateValue = document.getElementById("rateValue");
+    const generateBtn = document.getElementById("generateBtn");
+    const previewVoiceBtn = document.getElementById("previewVoiceBtn");
+    const outputSection = document.getElementById("outputSection");
+    const playBtn = document.getElementById("playBtn");
+    const themeToggle = document.getElementById("themeToggle");
+    const themeIcon = document.getElementById("themeIcon");
 
-const openai = new OpenAI({ apiKey: 'YOUR_OPENAI_API_KEY' }); // ضع مفتاح الـ API الخاص بك هنا
+    let synth = window.speechSynthesis;
+    let voices = [];
 
-app.use(express.json());
-app.use(express.static('public')); // مجلد ملفات الواجهة
+    function populateVoices() {
+        if (!synth) return;
+        voices = synth.getVoices();
+        voiceSelect.innerHTML = "";
 
-app.post('/api/text-to-speech', async (req, res) => {
-    try {
-        const { text, voice } = req.body;
+        const langFilter = languageSelect.value;
+        let filtered = voices.filter(v => v.lang.startsWith(langFilter));
+        if (filtered.length === 0) filtered = voices;
 
-        // استدعاء خدمة توليد الصوت من OpenAI
-        const mp3Response = await openai.audio.speech.create({
-            model: "tts-1", // نموذج عالي السرعة والجودة
-            voice: voice,   // النبرة المختارة (alloy, nova, shimmer, echo...)
-            input: text,
-            response_format: "mp3"
+        filtered.forEach((voice, index) => {
+            const option = document.createElement("option");
+            option.value = voices.indexOf(voice);
+            option.textContent = `${voice.name} (${voice.lang})`;
+            voiceSelect.appendChild(option);
         });
-
-        const buffer = Buffer.from(await mp3Response.arrayBuffer());
-
-        // إرسال الملف الصوتي مباشرة إلى المتصفح
-        res.set({
-            'Content-Type': 'audio/mpeg',
-            'Content-Length': buffer.length
-        });
-        res.send(buffer);
-
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Error generating speech');
     }
-});
 
-app.listen(3000, () => console.log('Server running on port 3000'));
+    populateVoices();
+    if (synth.onvoiceschanged !== undefined) {
+        synth.onvoiceschanged = populateVoices;
+    }
+
+    languageSelect.addEventListener("change", populateVoices);
+
+    textInput.addEventListener("input", () => {
+        charCount.textContent = `${textInput.value.length} / 1000`;
+    });
+
+    rateRange.addEventListener("input", () => {
+        rateValue.textContent = `${rateRange.value}x`;
+    });
+
+    themeToggle.addEventListener("click", () => {
+        const currentTheme = document.documentElement.getAttribute("data-theme");
+        if (currentTheme === "dark") {
+            document.documentElement.setAttribute("data-theme", "light");
+            themeIcon.className = "fa-solid fa-moon";
+        } else {
+            document.documentElement.setAttribute("data-theme", "dark");
+            themeIcon.className = "fa-solid fa-sun";
+        }
+    });
+
+    let currentUtterance = null;
+
+    previewVoiceBtn.addEventListener("click", () => {
+        if (synth.speaking) synth.cancel();
+        const utterance = new SpeechSynthesisUtterance("مرحباً، هذه عينة صوتية تجريبية.");
+        const idx = voiceSelect.value;
+        if (voices[idx]) utterance.voice = voices[idx];
+        utterance.rate = parseFloat(rateRange.value);
+        synth.speak(utterance);
+    });
+
+    generateBtn.addEventListener("click", () => {
+        const text = textInput.value.trim();
+        if (!text) {
+            alert("يرجى كتابة نص أولاً!");
+            return;
+        }
+        if (synth.speaking) synth.cancel();
+
+        currentUtterance = new SpeechSynthesisUtterance(text);
+        const idx = voiceSelect.value;
+        if (voices[idx]) currentUtterance.voice = voices[idx];
+        currentUtterance.rate = parseFloat(rateRange.value);
+
+        outputSection.classList.remove("hidden");
+        synth.speak(currentUtterance);
+    });
+
+    playBtn.addEventListener("click", () => {
+        const text = textInput.value.trim();
+        if (text) {
+            if (synth.speaking) synth.cancel();
+            synth.speak(currentUtterance || new SpeechSynthesisUtterance(text));
+        }
+    });
+});
