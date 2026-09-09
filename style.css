@@ -4,6 +4,7 @@
     --text-color: #1e293b;
     --text-muted: #64748b;
     --primary: #7c3aed;
+    --primary-hover: #6d28d9;
     --border-color: #e2e8f0;
     --badge-bg: #f3e8ff;
     --badge-text: #7c3aed;
@@ -16,6 +17,7 @@
     --text-color: #f8fafc;
     --text-muted: #94a3b8;
     --primary: #8b5cf6;
+    --primary-hover: #7c3aed;
     --border-color: #334155;
     --badge-bg: rgba(139, 92, 246, 0.15);
     --badge-text: #a78bfa;
@@ -27,6 +29,7 @@
     margin: 0;
     padding: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
 body {
@@ -130,21 +133,16 @@ body {
     outline: none;
 }
 
+.input-group textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+}
+
 .setting-row { margin-top: 1.2rem; }
 .setting-row label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 0.4rem; color: var(--text-muted); }
 
 .voice-select-wrapper { display: flex; gap: 10px; }
 .voice-select-wrapper select { flex: 1; }
-
-#previewVoiceBtn {
-    background-color: var(--bg-color);
-    border: 1px solid var(--border-color);
-    color: var(--text-color);
-    padding: 0 1rem;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: 600;
-}
 
 .setting-row select {
     width: 100%;
@@ -154,6 +152,7 @@ body {
     background-color: var(--bg-color);
     color: var(--text-color);
     outline: none;
+    cursor: pointer;
 }
 
 .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem; }
@@ -176,6 +175,8 @@ input[type="range"] { width: 100%; accent-color: var(--primary); cursor: pointer
     justify-content: center;
     gap: 10px;
 }
+
+.generate-btn:hover { opacity: 0.95; }
 
 .hidden { display: none !important; }
 
@@ -214,13 +215,31 @@ input[type="range"] { width: 100%; accent-color: var(--primary); cursor: pointer
     50% { transform: scaleY(1); }
 }
 
-.status-text { font-size: 0.85rem; margin-bottom: 0.8rem; }
+.status-text { font-size: 0.85rem; margin-bottom: 0.8rem; color: var(--text-color); }
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
 .action-sub-btn {
-    padding: 0.5rem 1rem;
+    padding: 0.6rem 1.2rem;
     border: 1px solid var(--border-color);
     background-color: var(--card-bg);
     color: var(--text-color);
     border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
+
+.action-sub-btn.download {
+    background-color: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.action-sub-btn:hover { opacity: 0.85; }
