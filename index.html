@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,8 +15,8 @@
             <i class="fa-solid fa-microphone-lines logo-icon"></i>
             <span class="logo-text">Voice<span class="highlight">AI</span></span>
         </div>
-        <button id="themeToggle" class="theme-btn" title="تبديل الوضع الليلي">
-            <i class="fa-solid fa-moon"></i>
+        <button id="themeToggle" class="theme-btn" type="button" title="تبديل الوضع الليلي والنهاري">
+            <i id="themeIcon" class="fa-solid fa-moon"></i>
         </button>
     </header>
 
@@ -45,48 +45,56 @@
                 <select id="languageSelect">
                     <option value="ar-IQ">العربية (اللهجة العراقية)</option>
                     <option value="ar-SA">العربية (اللهجة السعودية / الخليجية)</option>
+                    <option value="ar-AE">العربية (اللهجة الإماراتية)</option>
                     <option value="ar-EG">العربية (اللهجة المصرية)</option>
-                    <option value="ar-AR" selected>العربية الفصحى (Standard)</option>
+                    <option value="ar-MA">العربية (اللهجة المغربية)</option>
+                    <option value="ar-SA" selected>العربية الفصحى (Standard)</option>
                     <option value="en-US">الإنجليزية (أمريكي)</option>
+                    <option value="en-GB">الإنجليزية (بريطاني)</option>
                     <option value="fr-FR">الفرنسية</option>
+                    <option value="de-DE">الألمانية</option>
+                    <option value="es-ES">الإسبانية</option>
+                    <option value="tr-TR">التركية</option>
                 </select>
             </div>
 
-            <!-- اختيار الصوت والنبرة -->
+            <!-- اختيار الصوت والنبرة + زر معاينة الصوت -->
             <div class="setting-row">
                 <label for="voiceSelect"><i class="fa-solid fa-microphone-audio"></i> نبرة الصوت</label>
-                <select id="voiceSelect">
-                    <!-- سيتم تعبئتها ديناميكياً عبر الجافاسكريبت -->
-                </select>
+                <div class="voice-select-wrapper">
+                    <select id="voiceSelect">
+                        <!-- يتم تعبئتها ديناميكياً -->
+                    </select>
+                    <button id="previewVoiceBtn" type="button" title="استماع لعينة من الصوت المختار">
+                        <i class="fa-solid fa-volume-high"></i> معاينة
+                    </button>
+                </div>
             </div>
 
-            <!-- سرعة الكلام -->
+            <!-- سرعة الكلام (شريط تمرير Slider) -->
             <div class="setting-row">
-                <label for="rateSelect"><i class="fa-solid fa-gauge-high"></i> سرعة الكلام</label>
-                <select id="rateSelect">
-                    <option value="0.8">بطيء وواضح</option>
-                    <option value="1" selected>طبيعي</option>
-                    <option value="1.25">سريع</option>
-                </select>
+                <div class="slider-header">
+                    <label for="rateRange"><i class="fa-solid fa-gauge-high"></i> سرعة الكلام</label>
+                    <span id="rateValue">1.0x</span>
+                </div>
+                <input type="range" id="rateRange" min="0.5" max="2.0" step="0.1" value="1.0">
             </div>
 
-            <!-- زر التوليد مع تأثيرات -->
-            <button id="generateBtn" class="generate-btn">
+            <!-- زر التوليد -->
+            <button id="generateBtn" class="generate-btn" type="button">
                 <span>تحويل النص إلى صوت</span>
                 <i class="fa-solid fa-bolt"></i>
             </button>
 
-            <!-- مؤشر الموجات الصوتية وقسم المعاينة والتحميل -->
+            <!-- مؤشر الموجات الصوتية وقسم النتيجة -->
             <div id="outputSection" class="output-section hidden">
                 <div class="wave-animation">
                     <span></span><span></span><span></span><span></span><span></span>
                 </div>
                 <div class="audio-player-box">
-                    <audio id="audioPreview" controls style="display:none;"></audio>
-                    <p class="status-text"><i class="fa-solid fa-circle-check"></i> تم توليد الصوت بنجاح!</p>
+                    <p class="status-text"><i class="fa-solid fa-circle-check"></i> تم توليد وتفعيل الصوت بنجاح!</p>
                     <div class="action-buttons">
-                        <button id="playBtn" class="action-sub-btn"><i class="fa-solid fa-play"></i> استماع</button>
-                        <button id="downloadBtn" class="action-sub-btn download"><i class="fa-solid fa-download"></i> تحميل الصوت</button>
+                        <button id="playBtn" class="action-sub-btn" type="button"><i class="fa-solid fa-play"></i> إعادة الاستماع</button>
                     </div>
                 </div>
             </div>
