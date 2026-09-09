@@ -1,60 +1,91 @@
-document.getElementById('convertBtn').addEventListener('click', async () => {
-    const textInput = document.getElementById('textInput');
-    const voiceSelect = document.getElementById('voiceSelect');
-    const btn = document.getElementById('convertBtn');
+export async function onRequestPost(context) {
+  try {
+    const body = await context.request.json();
 
-    const text = textInput.value.trim();
-    const voice_id = voiceSelect.value;
+    const text = body.text;
+    const voiceId = body.voiceId;
 
-    if (!text) {
-        alert('الرجاء كتابة نص أولاً!');
-        return;
-    }
-
-    // تغيير حالة الزر أثناء المعالجة
-    btn.innerText = 'جاري توليد الصوت... ⏳';
-    btn.disabled = true;
-
-    try {
-        // [هام] استبدل الرابط أدناه برابط الـ Cloudflare Worker الخاص بك
-        const workerUrl = 'https://sawt-ai.mohshaa57.workers.dev'; 
-
-        const response = await fetch(workerUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                text: text,
-                voice_id: voice_id
-            })
-        });
-
-        if (!response.ok) {
-            const errData = await response.json();
-            throw new Error(errData.error || 'فشل الاتصال بخادم التوليد');
+    if (!text || !voiceId) {
+      return new Response(
+        JSON.stringify({
+          error: "النص والصوت مطلوبان"
+        }),
+        {
+          status: 400,
+          headers: {
+            "Content-Type": "application/json"
+          }
         }
-
-        // استقبال ملف الصوت (Blob) وتحميله تلقائياً
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `voiceai-${Date.now()}.mp3`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        window.URL.revokeObjectURL(url);
-
-        btn.innerText = 'تم التنزيل بنجاح! 🎉';
-        setTimeout(() => {
-            btn.innerText = 'تحويل وتنزيل كـ MP3 🎵';
-        }, 3000);
-
-    } catch (error) {
-        alert('حدث خطأ: ' + error.message);
-        btn.innerText = 'تحويل وتنزيل كـ MP3 🎵';
-    } finally {
-        btn.disabled = false;
+      );
     }
-});
+
+    const response = await fetch(
+      `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
+      {
+        method: "POST",
+
+        headers: {
+          "xi-api-key": context.env.ELEVENLABS_API_KEY,
+          "Content-Type": "application/json",
+          "Accept": "audio/mpeg"
+        },
+
+        body: JSON.stringify({
+          text: text,
+
+          model_id: "eleven_multilingual_v2",
+
+          output_format: "mp3_44100_128",
+
+          voice_settings: {
+            stability: 0.5,
+            similarity_boost: 0.75,
+            style: 0.0,
+            use_speaker_boost: true
+          }
+        })
+      }
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+
+      return new Response(
+        JSON.stringify({
+          error: "فشل إنشاء الصوت",
+          details: errorText
+        }),
+        {
+          status: response.status,
+          headers: {
+            "Content-Type": "application/json"
+          }
+        }
+      );
+    }
+
+    const audio = await response.arrayBuffer();
+
+    return new Response(audio, {
+      status: 200,
+      headers: {
+        "Content-Type": "audio/mpeg",
+        "Cache-Control": "no-store"
+      }
+    });
+
+  } catch (error) {
+
+    return new Response(
+      JSON.stringify({
+        error: "حدث خطأ في الخادم"
+      }),
+      {
+        status: 500,
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }
+    );
+  }
+}
