@@ -1,89 +1,98 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VoiceAI - تحويل النص إلى صوت</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoiceAI - تحويل النص إلى صوت فائق الواقعية</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <header class="header">
-    <div class="logo">🎙️ VoiceAI</div>
-    <button class="menu-btn" onclick="toggleMenu()">☰</button>
-    <nav id="nav">
-      <a href="#home">الرئيسية</a>
-      <a href="#about">حول الموقع</a>
-    </nav>
-  </header>
 
-  <main id="home">
-    <section class="hero">
-      <div class="badge">✨ تحويل النص إلى صوت بالذكاء الاصطناعي</div>
-      <h1>حوّل النص إلى <span>صوت طبيعي</span></h1>
-      <p>اكتب النص الذي تريده، واختر اللغة والصوت، ثم أنشئ صوتًا بجودة عالية.</p>
-    </section>
+    <!-- الهيدر وشريط التنقل -->
+    <header class="navbar">
+        <div class="logo-container">
+            <i class="fa-solid fa-microphone-lines logo-icon"></i>
+            <span class="logo-text">Voice<span class="highlight">AI</span></span>
+        </div>
+        <button id="themeToggle" class="theme-btn" title="تبديل الوضع الليلي">
+            <i class="fa-solid fa-moon"></i>
+        </button>
+    </header>
 
-    <section class="converter">
-      <div class="card">
-        <div class="card-header">
-          <h2>إنشاء صوت</h2>
-          <span id="counter">0 / 1000</span>
+    <!-- المحتوى الرئيسي -->
+    <main class="main-container">
+        <div class="hero-section">
+            <span class="badge"><i class="fa-solid fa-wand-magic-sparkles"></i> مدعوم بالذكاء الاصطناعي</span>
+            <h1>حوّل النص إلى صوت <span class="gradient-text">طبيعي وفخم</span></h1>
+            <p>اكتب النص الذي تريده، اختر اللهجة المناسبة ونبرة الصوت، ثم أنشئ صوتاً احترافياً بجودة عالية.</p>
         </div>
 
-        <textarea id="text" maxlength="1000"
-          placeholder="اكتب النص الذي تريد تحويله إلى صوت..."
-          oninput="updateCounter()"></textarea>
+        <div class="card-generator">
+            <div class="card-header">
+                <h2><i class="fa-solid fa-sliders"></i> لوحة التحكم</h2>
+                <span id="charCount" class="char-count">0 / 1000</span>
+            </div>
 
-        <div class="settings">
-          <div class="setting">
-            <label>اللغة</label>
-            <select id="language">
-              <option value="ar">العربية</option>
-              <option value="en">English</option>
-              <option value="fr">Français</option>
-              <option value="tr">Türkçe</option>
-            </select>
-          </div>
-          <div class="setting">
-            <label>الصوت</label>
-            <select id="voice">
-              <option>صوت عربي 1</option>
-              <option>صوت عربي 2</option>
-              <option>صوت عربي 3</option>
-            </select>
-          </div>
-          <div class="setting">
-            <label>سرعة الكلام</label>
-            <select id="speed">
-              <option value="0.75">بطيء</option>
-              <option value="1" selected>طبيعي</option>
-              <option value="1.25">سريع</option>
-              <option value="1.5">سريع جدًا</option>
-            </select>
-          </div>
+            <!-- حقل النص -->
+            <div class="input-group">
+                <textarea id="textInput" placeholder="اكتب أو الصق النص هنا للتحويل إلى صوت..." maxlength="1000"></textarea>
+            </div>
+
+            <!-- اختيار اللغة / اللهجة -->
+            <div class="setting-row">
+                <label for="languageSelect"><i class="fa-solid fa-globe"></i> اللغة / اللهجة</label>
+                <select id="languageSelect">
+                    <option value="ar-IQ">العربية (اللهجة العراقية)</option>
+                    <option value="ar-SA">العربية (اللهجة السعودية / الخليجية)</option>
+                    <option value="ar-EG">العربية (اللهجة المصرية)</option>
+                    <option value="ar-AR" selected>العربية الفصحى (Standard)</option>
+                    <option value="en-US">الإنجليزية (أمريكي)</option>
+                    <option value="fr-FR">الفرنسية</option>
+                </select>
+            </div>
+
+            <!-- اختيار الصوت والنبرة -->
+            <div class="setting-row">
+                <label for="voiceSelect"><i class="fa-solid fa-microphone-audio"></i> نبرة الصوت</label>
+                <select id="voiceSelect">
+                    <!-- سيتم تعبئتها ديناميكياً عبر الجافاسكريبت -->
+                </select>
+            </div>
+
+            <!-- سرعة الكلام -->
+            <div class="setting-row">
+                <label for="rateSelect"><i class="fa-solid fa-gauge-high"></i> سرعة الكلام</label>
+                <select id="rateSelect">
+                    <option value="0.8">بطيء وواضح</option>
+                    <option value="1" selected>طبيعي</option>
+                    <option value="1.25">سريع</option>
+                </select>
+            </div>
+
+            <!-- زر التوليد مع تأثيرات -->
+            <button id="generateBtn" class="generate-btn">
+                <span>تحويل النص إلى صوت</span>
+                <i class="fa-solid fa-bolt"></i>
+            </button>
+
+            <!-- مؤشر الموجات الصوتية وقسم المعاينة والتحميل -->
+            <div id="outputSection" class="output-section hidden">
+                <div class="wave-animation">
+                    <span></span><span></span><span></span><span></span><span></span>
+                </div>
+                <div class="audio-player-box">
+                    <audio id="audioPreview" controls style="display:none;"></audio>
+                    <p class="status-text"><i class="fa-solid fa-circle-check"></i> تم توليد الصوت بنجاح!</p>
+                    <div class="action-buttons">
+                        <button id="playBtn" class="action-sub-btn"><i class="fa-solid fa-play"></i> استماع</button>
+                        <button id="downloadBtn" class="action-sub-btn download"><i class="fa-solid fa-download"></i> تحميل الصوت</button>
+                    </div>
+                </div>
+            </div>
         </div>
+    </main>
 
-        <button class="generate-btn" onclick="generateVoice()">🎙️ تحويل النص إلى صوت</button>
-
-        <div id="result" class="result hidden">
-          <div class="result-title">🎧 الصوت جاهز</div>
-          <audio id="audio" controls></audio>
-          <button class="download-btn">⬇️ تحميل الصوت</button>
-        </div>
-      </div>
-    </section>
-
-    <section id="about" class="about">
-      <h2>تحويل النص إلى صوت بسهولة</h2>
-      <p>VoiceAI هو موقع بسيط يساعدك على تحويل النصوص إلى أصوات باستخدام تقنيات الذكاء الاصطناعي.</p>
-    </section>
-
-    <section class="ad-container">
-      <div class="ad">مساحة إعلانية</div>
-    </section>
-  </main>
-
-  <footer><p>© 2026 VoiceAI - جميع الحقوق محفوظة</p></footer>
-  <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
