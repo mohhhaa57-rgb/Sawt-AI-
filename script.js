@@ -3,46 +3,48 @@ document.addEventListener("DOMContentLoaded", () => {
     const charCount = document.getElementById("charCount");
     const languageSelect = document.getElementById("languageSelect");
     const voiceSelect = document.getElementById("voiceSelect");
-    const rateSelect = document.getElementById("rateSelect");
+    const rateRange = document.getElementById("rateRange");
+    const rateValue = document.getElementById("rateValue");
     const generateBtn = document.getElementById("generateBtn");
+    const previewVoiceBtn = document.getElementById("previewVoiceBtn");
     const outputSection = document.getElementById("outputSection");
     const playBtn = document.getElementById("playBtn");
-    const downloadBtn = document.getElementById("downloadBtn");
     const themeToggle = document.getElementById("themeToggle");
+    const themeIcon = document.getElementById("themeIcon");
 
     let synth = window.speechSynthesis;
     let voices = [];
 
-    // جلب الأصوات المتاحة في المتصفح وتصفيتها
+    // تحميل وتعبئة النبرات والأصوات بناءً على اللغة المختارة
     function populateVoices() {
+        if (!synth) return;
         voices = synth.getVoices();
         voiceSelect.innerHTML = "";
 
-        const selectedLangPrefix = languageSelect.value.split('-')[0]; // مثل ar أو en أو fr
-        
-        let filteredVoices = voices.filter(voice => voice.lang.startsWith(selectedLangPrefix));
+        const selectedLangCode = languageSelect.value; // مثال: ar-SA أو en-US
+        const langPrefix = selectedLangCode.split('-')[0];
 
-        // إذا لم توجد أصوات مخصصة للغة الفرعية، اعرض كل أصوات اللغة الأساسية أو جميع الأصوات المتاحة
-        if (filteredVoices.length === 0) {
-            filteredVoices = voices;
+        // فلترة الأصوات المتوافقة مع اللغة أو جلب الكل كاحتياطي
+        let matchedVoices = voices.filter(voice => voice.lang && voice.lang.toLowerCase().includes(langPrefix));
+        if (matchedVoices.length === 0) {
+            matchedVoices = voices; // لو لم توجد أصوات مطابقة دقيقة، اعرض المتاحة
         }
 
-        filteredVoices.forEach((voice, index) => {
+        matchedVoices.forEach((voice, index) => {
             const option = document.createElement("option");
-            option.value = index;
-            // تسميات أصوات تعبيرية وفخمة بناءً على النبرة
-            let customName = `نبرة احترافية ${index + 1} (${voice.name})`;
-            if(voice.name.includes('Natural') || voice.name.includes('Google')) {
-                customName = `✨ صوت فخم عالي الوضوح (${voice.name})`;
+            option.value = voices.indexOf(voice); // حفظ المؤشر الحقيقي الأصلي للصوت
+            
+            let badgeName = "✨ نبرة احترافية";
+            if (voice.name.includes("Google") || voice.name.includes("Natural") || voice.name.includes("Microsoft")) {
+                badgeName = "🎙️ صوت فخم عالي الوضوح";
             }
-            option.textContent = customName;
-            option.setAttribute('data-name', voice.name);
+            option.textContent = `${badgeName} (${voice.name})`;
             voiceSelect.appendChild(option);
         });
 
         if (voiceSelect.options.length === 0) {
             const option = document.createElement("option");
-            option.textContent = "لا توجد أصوات متاحة لهذه اللهجة";
+            option.textContent = "لا توجد أصوات متاحة في المتصفح لهذه اللغة";
             voiceSelect.appendChild(option);
         }
     }
@@ -52,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
         synth.onvoiceschanged = populateVoices;
     }
 
-    // تحديث قائمة الأصوات عند تغيير اللهجة / اللغة
+    // تحديث الأصوات عند تغيير اللغة
     languageSelect.addEventListener("change", populateVoices);
 
     // عداد الحروف
@@ -61,21 +63,44 @@ document.addEventListener("DOMContentLoaded", () => {
         charCount.textContent = `${length} / 1000`;
     });
 
-    // تبديل الوضع الليلي والنهاري
+    // تحديث قيمة شريط السرعة بصرياً
+    rateRange.addEventListener("input", () => {
+        rateValue.textContent = `${rateRange.value}x`;
+    });
+
+    // تفعيل الوضع الليلي والنهاري وحفظ الخيار
     themeToggle.addEventListener("click", () => {
         const currentTheme = document.documentElement.getAttribute("data-theme");
         if (currentTheme === "dark") {
-            document.documentElement.removeAttribute("data-theme");
-            themeToggle.innerHTML = '<i class="fa-solid fa-moon"></i>';
+            document.documentElement.setAttribute("data-theme", "light");
+            themeIcon.className = "fa-solid fa-moon";
         } else {
             document.documentElement.setAttribute("data-theme", "dark");
-            themeToggle.innerHTML = '<i class="fa-solid fa-sun"></i>';
+            themeIcon.className = "fa-solid fa-sun";
         }
     });
 
     let currentUtterance = null;
 
-    // زر التوليد وتحويل النص
+    // زر معاينة الصوت (Preview)
+    previewVoiceBtn.addEventListener("click", () => {
+        if (synth.speaking) {
+            synth.cancel();
+        }
+        const sampleText = languageSelect.value.startsWith('ar') ? "مرحباً، هذه عينة لتجربة نبرة الصوت." : "Hello, this is a voice preview sample.";
+        const utterance = new SpeechSynthesisUtterance(sampleText);
+        
+        const selectedVoiceIndex = voiceSelect.value;
+        if (voices[selectedVoiceIndex]) {
+            utterance.voice = voices[selectedVoiceIndex];
+        }
+        utterance.rate = parseFloat(rateRange.value);
+        utterance.lang = languageSelect.value;
+
+        synth.speak(utterance);
+    });
+
+    // زر تحويل النص الكامل إلى صوت
     generateBtn.addEventListener("click", () => {
         const text = textInput.value.trim();
         if (!text) {
@@ -88,30 +113,20 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         currentUtterance = new SpeechSynthesisUtterance(text);
-        const selectedVoiceIndex = voiceSelect.value;
         
-        const selectedLangPrefix = languageSelect.value.split('-')[0];
-        let filteredVoices = voices.filter(voice => voice.lang.startsWith(selectedLangPrefix));
-        if (filteredVoices.length === 0) filteredVoices = voices;
-
-        if (filteredVoices[selectedVoiceIndex]) {
-            currentUtterance.voice = filteredVoices[selectedVoiceIndex];
+        const selectedVoiceIndex = voiceSelect.value;
+        if (voices[selectedVoiceIndex]) {
+            currentUtterance.voice = voices[selectedVoiceIndex];
         }
 
-        currentUtterance.rate = parseFloat(rateSelect.value);
+        currentUtterance.rate = parseFloat(rateRange.value);
         currentUtterance.lang = languageSelect.value;
 
-        // إظهار قسم الموجات الصوتية والنجاح
         outputSection.classList.remove("hidden");
-
         synth.speak(currentUtterance);
-
-        currentUtterance.onend = () => {
-            // انتهى التلاوة الصوتية
-        };
     });
 
-    // زر الاستماع المباشر
+    // زر إعادة الاستماع
     playBtn.addEventListener("click", () => {
         const text = textInput.value.trim();
         if (text) {
@@ -119,10 +134,4 @@ document.addEventListener("DOMContentLoaded", () => {
             synth.speak(currentUtterance || new SpeechSynthesisUtterance(text));
         }
     });
-
-    // زر التحميل التخيلي (ملاحظة: Web Speech API في المتصفحات تولد صوتیات مباشرة ولا تتيح رابط تحميل مباشر ملف MP3 إلا عبر تسجيل داخلي، لذا سنضع رسالة إرشادية للمستخدم أو محاكاة)
-    downloadBtn.addEventListener("click", () => {
-        alert("ميزة التحميل المباشر لملفات MP3 تتطلب خادم معالجة سحابي (Backend)، يتم تشغيل الصوت حالياً عبر محرك المتصفح الفائق الجودة!");
-    });
 });
-              
