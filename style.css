@@ -29,7 +29,7 @@
     margin: 0;
     padding: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
 body {
@@ -69,8 +69,8 @@ body {
     background: transparent;
     border: 1px solid var(--border-color);
     color: var(--text-color);
-    width: 40px;
-    height: 40px;
+    width: 42px;
+    height: 42px;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
@@ -153,7 +153,7 @@ body {
 
 .input-group textarea {
     width: 100%;
-    height: 150px;
+    height: 140px;
     padding: 1rem;
     border: 1px solid var(--border-color);
     border-radius: 12px;
@@ -181,6 +181,34 @@ body {
     color: var(--text-muted);
 }
 
+.voice-select-wrapper {
+    display: flex;
+    gap: 10px;
+}
+
+.voice-select-wrapper select {
+    flex: 1;
+}
+
+#previewVoiceBtn {
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 0 1rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+#previewVoiceBtn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
 .setting-row select {
     width: 100%;
     padding: 0.8rem 1rem;
@@ -195,6 +223,27 @@ body {
 
 .setting-row select:focus {
     border-color: var(--primary);
+}
+
+.slider-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.3rem;
+}
+
+#rateValue {
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: var(--primary);
+}
+
+input[type="range"] {
+    width: 100%;
+    accent-color: var(--primary);
+    cursor: pointer;
+    height: 6px;
+    border-radius: 3px;
 }
 
 .generate-btn {
@@ -221,10 +270,6 @@ body {
     transform: translateY(-1px);
 }
 
-.generate-btn:active {
-    transform: translateY(1px);
-}
-
 .hidden {
     display: none !important;
 }
@@ -238,7 +283,7 @@ body {
     text-align: center;
 }
 
-/* تأثير الموجات الصوتية المتحركة */
+/* تأثير الموجات الصوتية */
 .wave-animation {
     display: flex;
     justify-content: center;
@@ -274,7 +319,6 @@ body {
 
 .action-buttons {
     display: flex;
-    gap: 10px;
     justify-content: center;
 }
 
@@ -292,12 +336,7 @@ body {
     gap: 6px;
 }
 
-.action-sub-btn.download {
-    background-color: var(--primary);
-    color: white;
-    border-color: var(--primary);
-}
-
 .action-sub-btn:hover {
-    opacity: 0.85;
+    border-color: var(--primary);
+    color: var(--primary);
 }
