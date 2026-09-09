@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VoiceAI - تحويل النص إلى صوت</title>
+    <title>VoiceAI - تحويل النص إلى صوت فخم</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -21,9 +21,9 @@
 
     <main class="main-container">
         <div class="hero-section">
-            <span class="badge"><i class="fa-solid fa-wand-magic-sparkles"></i> مدعوم بالذكاء الاصطناعي</span>
-            <h1>حوّل النص إلى صوت <span class="gradient-text">طبيعي وفخم</span></h1>
-            <p>اكتب النص واقْرأه بأفضل النبرات والأصوات المتاحة.</p>
+            <span class="badge"><i class="fa-solid fa-wand-magic-sparkles"></i> احترافي ومتعدد النبرات</span>
+            <h1>حوّل النص إلى صوت <span class="gradient-text">واقعي وبدون عناء</span></h1>
+            <p>اختر اللهجة والنبرة بدقة، استمع للعينة، وحمّل الصوت مباشرة.</p>
         </div>
 
         <div class="card-generator">
@@ -36,25 +36,38 @@
                 <textarea id="textInput" placeholder="اكتب أو الصق النص هنا للتحويل إلى صوت..." maxlength="1000"></textarea>
             </div>
 
+            <!-- اختيار اللهجات واللغات -->
             <div class="setting-row">
-                <label for="languageSelect"><i class="fa-solid fa-globe"></i> اللغة / اللهجة</label>
+                <label for="languageSelect"><i class="fa-solid fa-globe"></i> اللغة أو اللهجة</label>
                 <select id="languageSelect">
-                    <option value="ar" selected>العربية</option>
-                    <option value="en">الإنجليزية</option>
-                    <option value="fr">الفرنسية</option>
-                    <option value="de">الألمانية</option>
-                    <option value="tr">التركية</option>
+                    <option value="ar-IQ">العربية (اللهجة العراقية)</option>
+                    <option value="ar-SA">العربية (اللهجة السعودية / الخليجية)</option>
+                    <option value="ar-EG">العربية (اللهجة المصرية)</option>
+                    <option value="ar-AR" selected>العربية الفصحى (Standard)</option>
+                    <option value="en-US">الإنجليزية (أمريكي)</option>
+                    <option value="en-GB">الإنجليزية (بريطاني)</option>
+                    <option value="fr-FR">الفرنسية</option>
+                    <option value="de-DE">الألمانية</option>
+                    <option value="tr-TR">التركية</option>
                 </select>
             </div>
 
+            <!-- اختيار النبرات (رجل، امرأة، طفل، عجوز، آلي) -->
             <div class="setting-row">
-                <label for="voiceSelect"><i class="fa-solid fa-microphone-audio"></i> نبرة الصوت</label>
+                <label for="toneSelect"><i class="fa-solid id-card"></i> تصنيف النبرة</label>
                 <div class="voice-select-wrapper">
-                    <select id="voiceSelect"></select>
-                    <button id="previewVoiceBtn" type="button"><i class="fa-solid fa-volume-high"></i> معاينة</button>
+                    <select id="toneSelect">
+                        <option value="male">👨 رجل (فخم وعميق)</option>
+                        <option value="female" selected>👩 امرأة (ناعم وواضح)</option>
+                        <option value="child">👦 طفل (حيوي)</option>
+                        <option value="elder">👴 عجوز (حكيم وهادئ)</option>
+                        <option value="robot">🤖 آلي / روبوت</option>
+                    </select>
+                    <button id="previewVoiceBtn" type="button" class="action-sub-btn"><i class="fa-solid fa-volume-high"></i> معاينة</button>
                 </div>
             </div>
 
+            <!-- سرعة الصوت -->
             <div class="setting-row">
                 <div class="slider-header">
                     <label for="rateRange"><i class="fa-solid fa-gauge-high"></i> سرعة الكلام</label>
@@ -63,17 +76,22 @@
                 <input type="range" id="rateRange" min="0.5" max="2.0" step="0.1" value="1.0">
             </div>
 
+            <!-- زر التشغيل -->
             <button id="generateBtn" class="generate-btn" type="button">
-                <span>تشغيل الصوت</span>
+                <span>توليد وتشغيل الصوت</span>
                 <i class="fa-solid fa-bolt"></i>
             </button>
 
+            <!-- صندوق النتيجة والتنزيل -->
             <div id="outputSection" class="output-section hidden">
                 <div class="wave-animation">
                     <span></span><span></span><span></span><span></span><span></span>
                 </div>
-                <p class="status-text"><i class="fa-solid fa-circle-check"></i> يتم تشغيل الصوت بنجاح!</p>
-                <button id="playBtn" class="action-sub-btn" type="button"><i class="fa-solid fa-play"></i> إعادة الاستماع</button>
+                <p class="status-text"><i class="fa-solid fa-circle-check"></i> جاهز للاستماع والتنزيل!</p>
+                <div class="action-buttons">
+                    <button id="playBtn" class="action-sub-btn" type="button"><i class="fa-solid fa-play"></i> استماع</button>
+                    <button id="downloadBtn" class="action-sub-btn download" type="button"><i class="fa-solid fa-download"></i> تنزيل MP3</button>
+                </div>
             </div>
         </div>
     </main>
